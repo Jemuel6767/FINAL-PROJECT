@@ -1,0 +1,47 @@
+Table users {
+  id int [pk, increment]
+  name varchar(120)
+  email varchar(160) [unique]
+  password varchar
+  role varchar
+  created_at datetime
+  updated_at datetime
+}
+
+Table subjects {
+  id int [pk, increment]
+  name varchar(120) [unique]
+  description text
+  created_at datetime
+  updated_at datetime
+}
+
+Table categories {
+  id int [pk, increment]
+  name varchar(120) [unique]
+  description text
+  created_at datetime
+  updated_at datetime
+}
+
+Table materials {
+  id int [pk, increment]
+  title varchar(180)
+  description text
+  file_name varchar(255)
+  file_path varchar(500)
+  file_type varchar(100)
+  file_size int
+  user_id int [ref: > users.id]
+  subject_id int [ref: > subjects.id]
+  category_id int [ref: > categories.id]
+  created_at datetime
+  updated_at datetime
+}
+
+Table downloads {
+  id int [pk, increment]
+  user_id int [ref: > users.id]
+  material_id int [ref: > materials.id]
+  downloaded_at datetime
+}

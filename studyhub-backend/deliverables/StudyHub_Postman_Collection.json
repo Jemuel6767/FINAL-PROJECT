@@ -1,0 +1,37 @@
+{
+  "info": {
+    "name": "StudyHub Backend API",
+    "description": "Postman collection for the StudyHub NestJS backend.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:3000" },
+    { "key": "teacher_token", "value": "" },
+    { "key": "student_token", "value": "" },
+    { "key": "subject_id", "value": "1" },
+    { "key": "category_id", "value": "1" },
+    { "key": "material_id", "value": "1" }
+  ],
+  "item": [
+    { "name": "Register Student", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Postman Student\",\n  \"email\": \"postman.student@example.com\",\n  \"password\": \"Student123!\"\n}" }, "url": "{{base_url}}/auth/register" }, "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 201) pm.collectionVariables.set('student_token', pm.response.json().access_token);"] } }] },
+    { "name": "Login", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"email\": \"student@example.com\",\n  \"password\": \"Student123!\"\n}" }, "url": "{{base_url}}/auth/login" }, "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 200) pm.collectionVariables.set('student_token', pm.response.json().access_token);"] } }] },
+    { "name": "Profile", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{student_token}}" }], "url": "{{base_url}}/auth/profile" } },
+    { "name": "List Subjects", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{student_token}}" }], "url": "{{base_url}}/subjects" } },
+    { "name": "Get Subject", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{student_token}}" }], "url": "{{base_url}}/subjects/{{subject_id}}" } },
+    { "name": "Create Subject (Teacher)", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{teacher_token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Information Technology\",\n  \"description\": \"IT subject\"\n}" }, "url": "{{base_url}}/subjects" } },
+    { "name": "Update Subject (Teacher)", "request": { "method": "PATCH", "header": [{ "key": "Authorization", "value": "Bearer {{teacher_token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"description\": \"Updated description\"\n}" }, "url": "{{base_url}}/subjects/{{subject_id}}" } },
+    { "name": "Delete Subject (Teacher)", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{teacher_token}}" }], "url": "{{base_url}}/subjects/{{subject_id}}" } },
+    { "name": "List Categories", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{student_token}}" }], "url": "{{base_url}}/categories" } },
+    { "name": "Get Category", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{student_token}}" }], "url": "{{base_url}}/categories/{{category_id}}" } },
+    { "name": "Create Category (Teacher)", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{teacher_token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Lecture Notes\",\n  \"description\": \"Learning notes\"\n}" }, "url": "{{base_url}}/categories" } },
+    { "name": "Update Category (Teacher)", "request": { "method": "PATCH", "header": [{ "key": "Authorization", "value": "Bearer {{teacher_token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"description\": \"Updated category\"\n}" }, "url": "{{base_url}}/categories/{{category_id}}" } },
+    { "name": "Delete Category (Teacher)", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{teacher_token}}" }], "url": "{{base_url}}/categories/{{category_id}}" } },
+    { "name": "List Materials", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{student_token}}" }], "url": "{{base_url}}/materials?keyword=notes&subjectId={{subject_id}}&categoryId={{category_id}}" } },
+    { "name": "Get Material", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{student_token}}" }], "url": "{{base_url}}/materials/{{material_id}}" } },
+    { "name": "Create Material (Teacher)", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{teacher_token}}" }], "body": { "mode": "formdata", "formdata": [{ "key": "title", "value": "Lecture Notes", "type": "text" }, { "key": "description", "value": "Sample notes", "type": "text" }, { "key": "subjectId", "value": "{{subject_id}}", "type": "text" }, { "key": "categoryId", "value": "{{category_id}}", "type": "text" }, { "key": "file", "type": "file", "src": "" }] }, "url": "{{base_url}}/materials" } },
+    { "name": "Update Material (Teacher)", "request": { "method": "PATCH", "header": [{ "key": "Authorization", "value": "Bearer {{teacher_token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"title\": \"Updated Lecture Notes\"\n}" }, "url": "{{base_url}}/materials/{{material_id}}" } },
+    { "name": "Delete Material (Teacher)", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{teacher_token}}" }], "url": "{{base_url}}/materials/{{material_id}}" } },
+    { "name": "Download Material", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{student_token}}" }], "url": "{{base_url}}/materials/{{material_id}}/download" } },
+    { "name": "Download History", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{student_token}}" }], "url": "{{base_url}}/downloads" } }
+  ]
+}
