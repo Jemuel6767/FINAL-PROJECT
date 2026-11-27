@@ -69,6 +69,19 @@ export class MaterialsService {
     return (await query.getMany()).map((material) => this.toPublicMaterial(material));
   }
 
+  async findDeletable(userId: number) {
+    const materials = await this.materials.createQueryBuilder('material')
+      .leftJoinAndSelect('material.uploader', 'uploader')
+      .leftJoinAndSelect('material.subject', 'subject')
+      .leftJoinAndSelect('material.category', 'category')
+      .leftJoin('material.downloads', 'download')
+      .where('material.userId = :userId', { userId })
+      .andWhere('download.downloadId IS NULL')
+      .orderBy('material.uploadDate', 'DESC')
+      .getMany();
+    return materials.map((material) => this.toPublicMaterial(material));
+  }
+
   async findOne(materialId: number) {
     const material = await this.materials.findOne({ where: { materialId }, relations: { uploader: true, subject: true, category: true } });
     if (!material) throw new NotFoundException('Learning material not found');

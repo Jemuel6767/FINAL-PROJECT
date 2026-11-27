@@ -319,7 +319,7 @@
                  },
                  {
                      "name":  "Cleanup",
-                     "description":  "Update and delete a material you own.",
+                     "description":  "Read available materials, then enter the selected materialId before update or delete.",
                      "item":  [
                                   {
                                       "name":  "UPDATE MATERIAL",
@@ -350,7 +350,28 @@
                                                                },
                                                       "url":  "{{base_url}}/learning-materials/{{material_id}}"
                                                   },
-                                      "description":  "Teacher who uploaded the material only."
+                                      "description":  "Teacher who uploaded the material only. Use the materialId returned by CREATE MATERIAL."
+                                  },
+                                  {
+                                      "name":  "SELECT MATERIAL TO DELETE - READ LIST",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "auth":  {
+                                                                   "bearer":  [
+                                                                                  {
+                                                                                      "key":  "token",
+                                                                                      "type":  "string",
+                                                                                      "value":  "{{access_token}}"
+                                                                                  }
+                                                                              ],
+                                                                   "type":  "bearer"
+                                                               },
+                                                      "url":  "{{base_url}}/learning-materials/deletable"
+                                                  },
+                                      "description":  "Lists only your materials that have no download records. Choose a materialId from this response, then enter it in DELETE MATERIAL's Params path field."
                                   },
                                   {
                                       "name":  "DELETE MATERIAL",
@@ -369,9 +390,9 @@
                                                                               ],
                                                                    "type":  "bearer"
                                                                },
-                                                      "url":  "{{base_url}}/learning-materials/{{material_id}}"
+                                                      "url":  "{{base_url}}/learning-materials/:materialId"
                                                   },
-                                      "description":  "Original uploader only; returns 409 if download records reference it."
+                                      "description":  "Choose a materialId from READ MATERIALS in the Params tab. Only its original teacher can delete it. Returns 409 if download records exist."
                                   }
                               ]
                  }

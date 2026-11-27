@@ -51,6 +51,7 @@ Except for login and student registration, API endpoints require `Authorization:
 | PUT | `/api/v1/subjects/{subjectId}` | Teacher | Update subject code/name |
 | GET | `/api/v1/categories` | Signed in | List categories |
 | GET | `/api/v1/learning-materials` | Signed in | Browse/search/filter materials (`search`, `subjectId`, `categoryId`) |
+| GET | `/api/v1/learning-materials/deletable` | Teacher | List only your materials with no download records, for choosing a safe delete target |
 | POST | `/api/v1/learning-materials` | Teacher | Upload a material as multipart form data |
 | PATCH | `/api/v1/learning-materials/{materialId}` | Original teacher | Update title, description, subject, or category |
 | DELETE | `/api/v1/learning-materials/{materialId}` | Original teacher | Delete material (409 if download history references it) |

@@ -31,6 +31,12 @@ export class MaterialsController {
     return this.materialsService.findAll(search, subjectId ? Number(subjectId) : undefined, categoryId ? Number(categoryId) : undefined);
   }
 
+  @Get('deletable')
+  @Roles(UserRole.TEACHER)
+  findDeletable(@Req() request: AuthenticatedRequest) {
+    return this.materialsService.findDeletable(request.user.userId);
+  }
+
   @Post()
   @Roles(UserRole.TEACHER)
   @UseInterceptors(FileInterceptor('file', {
