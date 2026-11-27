@@ -1,51 +1,9 @@
 {
   "info": {
     "name": "StudyHub Backend API",
-    "description": "Postman collection for the StudyHub NestJS backend.",
+    "description": "StudyHub API requests. Import StudyHub_Postman_Environment.postman_environment.json and select the StudyHub Local environment before sending requests.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
-  "variable": [
-    {
-      "key": "base_url",
-      "value": "http://localhost:3000"
-    },
-    {
-      "key": "teacher_token",
-      "value": ""
-    },
-    {
-      "key": "student_token",
-      "value": ""
-    },
-    {
-      "key": "subject_id",
-      "value": ""
-    },
-    {
-      "key": "category_id",
-      "value": ""
-    },
-    {
-      "key": "material_id",
-      "value": ""
-    },
-    {
-      "key": "teacher_email",
-      "value": "teacher@example.com"
-    },
-    {
-      "key": "teacher_password",
-      "value": "replace_with_demo_password"
-    },
-    {
-      "key": "student_email",
-      "value": ""
-    },
-    {
-      "key": "material_file_ready",
-      "value": "false"
-    }
-  ],
   "item": [
     {
       "name": "Register Student",
@@ -69,7 +27,7 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "pm.collectionVariables.set('student_email', `postman.student.${Date.now()}@example.com`);"
+              "pm.environment.set('student_email', `postman.student.${Date.now()}@example.com`);"
             ]
           }
         },
@@ -81,7 +39,7 @@
               "pm.test('Registration returns 201 Created', () => pm.response.to.have.status(201));",
               "const body = pm.response.json();",
               "pm.test('Registration returns an access token', () => pm.expect(body.access_token).to.be.a('string').and.not.empty);",
-              "if (body.access_token) pm.collectionVariables.set('student_token', body.access_token);"
+              "if (body.access_token) pm.environment.set('student_token', body.access_token);"
             ]
           }
         }
@@ -112,7 +70,7 @@
               "pm.test('Login returns 200 OK', () => pm.response.to.have.status(200));",
               "const body = pm.response.json();",
               "pm.test('Login returns an access token', () => pm.expect(body.access_token).to.be.a('string').and.not.empty);",
-              "if (body.access_token) pm.collectionVariables.set('student_token', body.access_token);"
+              "if (body.access_token) pm.environment.set('student_token', body.access_token);"
             ]
           }
         }
@@ -215,7 +173,7 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "if (!pm.collectionVariables.get('teacher_password') || pm.collectionVariables.get('teacher_password') === 'replace_with_demo_password') { console.warn(\"Teacher login skipped: set teacher_password to the demo teacher password from your local .env.\"); pm.execution.skipRequest(); }"
+              "if (!pm.environment.get('teacher_password') || pm.environment.get('teacher_password') === 'replace_with_demo_password') { console.warn(\"Teacher login skipped: set teacher_password to the demo teacher password from your local .env.\"); pm.execution.skipRequest(); }"
             ]
           }
         },
@@ -227,7 +185,7 @@
               "pm.test('Teacher login returns 200 OK', () => pm.response.to.have.status(200));",
               "const body = pm.response.json();",
               "pm.test('Teacher login returns an access token', () => pm.expect(body.access_token).to.be.a('string').and.not.empty);",
-              "if (body.access_token) pm.collectionVariables.set('teacher_token', body.access_token);"
+              "if (body.access_token) pm.environment.set('teacher_token', body.access_token);"
             ]
           }
         }
@@ -259,8 +217,8 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "if (!pm.collectionVariables.get('teacher_token')) { console.warn(\"Create Subject (Teacher) skipped: first run Login Teacher (Demo) with a seeded teacher account.\"); pm.execution.skipRequest(); }",
-              "pm.collectionVariables.set('subject_name', `Postman Subject ${Date.now()}`);"
+              "if (!pm.environment.get('teacher_token')) { console.warn(\"Create Subject (Teacher) skipped: first run Login Teacher (Demo) with a seeded teacher account.\"); pm.execution.skipRequest(); }",
+              "pm.environment.set('subject_name', `Postman Subject ${Date.now()}`);"
             ]
           }
         },
@@ -272,7 +230,7 @@
               "pm.test('Subject is created (201)', () => pm.response.to.have.status(201));",
               "const body = pm.response.json();",
               "pm.test('Created subject has an ID', () => pm.expect(body.id).to.exist);",
-              "if (body.id) pm.collectionVariables.set('subject_id', String(body.id));"
+              "if (body.id) pm.environment.set('subject_id', String(body.id));"
             ]
           }
         }
@@ -296,7 +254,7 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "if (!pm.collectionVariables.get('subject_id')) { console.warn(\"Get Subject skipped: no subject_id yet. Run Create Subject (Teacher) first.\"); pm.execution.skipRequest(); }"
+              "if (!pm.environment.get('subject_id')) { console.warn(\"Get Subject skipped: no subject_id yet. Run Create Subject (Teacher) first.\"); pm.execution.skipRequest(); }"
             ]
           }
         },
@@ -337,8 +295,8 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "if (!pm.collectionVariables.get('teacher_token')) { console.warn(\"Update Subject (Teacher) skipped: first run Login Teacher (Demo) with a seeded teacher account.\"); pm.execution.skipRequest(); }",
-              "if (!pm.collectionVariables.get('subject_id')) { console.warn(\"Update Subject (Teacher) skipped: no subject_id yet. Run Create Subject (Teacher) first.\"); pm.execution.skipRequest(); }"
+              "if (!pm.environment.get('teacher_token')) { console.warn(\"Update Subject (Teacher) skipped: first run Login Teacher (Demo) with a seeded teacher account.\"); pm.execution.skipRequest(); }",
+              "if (!pm.environment.get('subject_id')) { console.warn(\"Update Subject (Teacher) skipped: no subject_id yet. Run Create Subject (Teacher) first.\"); pm.execution.skipRequest(); }"
             ]
           }
         },
@@ -379,8 +337,8 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "if (!pm.collectionVariables.get('teacher_token')) { console.warn(\"Create Category (Teacher) skipped: first run Login Teacher (Demo) with a seeded teacher account.\"); pm.execution.skipRequest(); }",
-              "pm.collectionVariables.set('category_name', `Postman Category ${Date.now()}`);"
+              "if (!pm.environment.get('teacher_token')) { console.warn(\"Create Category (Teacher) skipped: first run Login Teacher (Demo) with a seeded teacher account.\"); pm.execution.skipRequest(); }",
+              "pm.environment.set('category_name', `Postman Category ${Date.now()}`);"
             ]
           }
         },
@@ -392,7 +350,7 @@
               "pm.test('Category is created (201)', () => pm.response.to.have.status(201));",
               "const body = pm.response.json();",
               "pm.test('Created category has an ID', () => pm.expect(body.id).to.exist);",
-              "if (body.id) pm.collectionVariables.set('category_id', String(body.id));"
+              "if (body.id) pm.environment.set('category_id', String(body.id));"
             ]
           }
         }
@@ -416,7 +374,7 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "if (!pm.collectionVariables.get('category_id')) { console.warn(\"Get Category skipped: no category_id yet. Run Create Category (Teacher) first.\"); pm.execution.skipRequest(); }"
+              "if (!pm.environment.get('category_id')) { console.warn(\"Get Category skipped: no category_id yet. Run Create Category (Teacher) first.\"); pm.execution.skipRequest(); }"
             ]
           }
         },
@@ -457,8 +415,8 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "if (!pm.collectionVariables.get('teacher_token')) { console.warn(\"Update Category (Teacher) skipped: first run Login Teacher (Demo) with a seeded teacher account.\"); pm.execution.skipRequest(); }",
-              "if (!pm.collectionVariables.get('category_id')) { console.warn(\"Update Category (Teacher) skipped: no category_id yet. Run Create Category (Teacher) first.\"); pm.execution.skipRequest(); }"
+              "if (!pm.environment.get('teacher_token')) { console.warn(\"Update Category (Teacher) skipped: first run Login Teacher (Demo) with a seeded teacher account.\"); pm.execution.skipRequest(); }",
+              "if (!pm.environment.get('category_id')) { console.warn(\"Update Category (Teacher) skipped: no category_id yet. Run Create Category (Teacher) first.\"); pm.execution.skipRequest(); }"
             ]
           }
         },
@@ -521,8 +479,8 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "if (!pm.collectionVariables.get('teacher_token')) { console.warn(\"Create Material (Teacher) skipped: first run Login Teacher (Demo) with a seeded teacher account.\"); pm.execution.skipRequest(); }",
-              "if (pm.collectionVariables.get('material_file_ready') !== 'true') { console.warn(\"Create Material skipped: attach a PDF/DOCX/PPTX/TXT file and set material_file_ready=true in collection variables.\"); pm.execution.skipRequest(); }"
+              "if (!pm.environment.get('teacher_token')) { console.warn(\"Create Material (Teacher) skipped: first run Login Teacher (Demo) with a seeded teacher account.\"); pm.execution.skipRequest(); }",
+              "if (pm.environment.get('material_file_ready') !== 'true') { console.warn(\"Create Material skipped: attach a PDF/DOCX/PPTX/TXT file and set material_file_ready=true in the StudyHub Local environment.\"); pm.execution.skipRequest(); }"
             ]
           }
         },
@@ -534,7 +492,7 @@
               "pm.test('Material is created (201)', () => pm.response.to.have.status(201));",
               "const body = pm.response.json();",
               "pm.test('Created material has an ID', () => pm.expect(body.id).to.exist);",
-              "if (body.id) pm.collectionVariables.set('material_id', String(body.id));"
+              "if (body.id) pm.environment.set('material_id', String(body.id));"
             ]
           }
         }
@@ -583,7 +541,7 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "if (!pm.collectionVariables.get('material_id')) { console.warn(\"Get Material skipped: no material_id yet. Create a material with a file first.\"); pm.execution.skipRequest(); }"
+              "if (!pm.environment.get('material_id')) { console.warn(\"Get Material skipped: no material_id yet. Create a material with a file first.\"); pm.execution.skipRequest(); }"
             ]
           }
         },
@@ -616,7 +574,7 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "if (!pm.collectionVariables.get('material_id')) { console.warn(\"Download Material skipped: no material_id yet. Create a material with a file first.\"); pm.execution.skipRequest(); }"
+              "if (!pm.environment.get('material_id')) { console.warn(\"Download Material skipped: no material_id yet. Create a material with a file first.\"); pm.execution.skipRequest(); }"
             ]
           }
         },
@@ -674,8 +632,8 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "if (!pm.collectionVariables.get('teacher_token')) { console.warn(\"Delete Material (Teacher) skipped: first run Login Teacher (Demo) with a seeded teacher account.\"); pm.execution.skipRequest(); }",
-              "if (!pm.collectionVariables.get('material_id')) { console.warn(\"Delete Material (Teacher) skipped: no material_id yet. Create a material with a file first.\"); pm.execution.skipRequest(); }"
+              "if (!pm.environment.get('teacher_token')) { console.warn(\"Delete Material (Teacher) skipped: first run Login Teacher (Demo) with a seeded teacher account.\"); pm.execution.skipRequest(); }",
+              "if (!pm.environment.get('material_id')) { console.warn(\"Delete Material (Teacher) skipped: no material_id yet. Create a material with a file first.\"); pm.execution.skipRequest(); }"
             ]
           }
         },
@@ -708,8 +666,8 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "if (!pm.collectionVariables.get('teacher_token')) { console.warn(\"Delete Category (Teacher) skipped: first run Login Teacher (Demo) with a seeded teacher account.\"); pm.execution.skipRequest(); }",
-              "if (!pm.collectionVariables.get('category_id')) { console.warn(\"Delete Category (Teacher) skipped: no category_id yet. Run Create Category (Teacher) first.\"); pm.execution.skipRequest(); }"
+              "if (!pm.environment.get('teacher_token')) { console.warn(\"Delete Category (Teacher) skipped: first run Login Teacher (Demo) with a seeded teacher account.\"); pm.execution.skipRequest(); }",
+              "if (!pm.environment.get('category_id')) { console.warn(\"Delete Category (Teacher) skipped: no category_id yet. Run Create Category (Teacher) first.\"); pm.execution.skipRequest(); }"
             ]
           }
         },
@@ -742,8 +700,8 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "if (!pm.collectionVariables.get('teacher_token')) { console.warn(\"Delete Subject (Teacher) skipped: first run Login Teacher (Demo) with a seeded teacher account.\"); pm.execution.skipRequest(); }",
-              "if (!pm.collectionVariables.get('subject_id')) { console.warn(\"Delete Subject (Teacher) skipped: no subject_id yet. Run Create Subject (Teacher) first.\"); pm.execution.skipRequest(); }"
+              "if (!pm.environment.get('teacher_token')) { console.warn(\"Delete Subject (Teacher) skipped: first run Login Teacher (Demo) with a seeded teacher account.\"); pm.execution.skipRequest(); }",
+              "if (!pm.environment.get('subject_id')) { console.warn(\"Delete Subject (Teacher) skipped: no subject_id yet. Run Create Subject (Teacher) first.\"); pm.execution.skipRequest(); }"
             ]
           }
         },
