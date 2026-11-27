@@ -1,0 +1,14 @@
+$kind: http-request
+url: "{{base_url}}/categories"
+method: POST
+headers:
+  Authorization: Bearer {{teacher_token}}
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "name": "Lecture Notes",
+      "description": "Learning notes"
+    }
+order: 11000

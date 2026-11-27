@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{base_url}}/materials/{{material_id}}"
+method: DELETE
+headers:
+  Authorization: Bearer {{teacher_token}}
+order: 18000

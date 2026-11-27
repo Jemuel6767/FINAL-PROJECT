@@ -1,0 +1,11 @@
+# Use this workspace to collaborate
+workspace:
+  id: edf49369-f222-449b-8eb2-3d9c332b3719
+
+localResources:
+  collections:
+    - ../studyhub-backend/deliverables/StudyHub_Postman_Collection.json
+
+cloudResources:
+  collections:
+    ../postman/collections/StudyHub Backend API: 295b6405-d213-4054-8f98-65465bea0a3e

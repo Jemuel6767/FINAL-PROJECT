@@ -1,0 +1,18 @@
+$kind: http-request
+url: "{{base_url}}/auth/register"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "name": "Postman Student",
+      "email": "postman.student@example.com",
+      "password": "Student123!"
+    }
+scripts:
+  - type: afterResponse
+    code: if (pm.response.code === 201) pm.collectionVariables.set('student_token', pm.response.json().access_token);
+    language: text/javascript
+order: 1000

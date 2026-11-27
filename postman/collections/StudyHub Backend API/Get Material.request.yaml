@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{base_url}}/materials/{{material_id}}"
+method: GET
+headers:
+  Authorization: Bearer {{student_token}}
+order: 15000

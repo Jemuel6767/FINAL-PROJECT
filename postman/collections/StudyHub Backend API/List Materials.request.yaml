@@ -1,0 +1,10 @@
+$kind: http-request
+url: "{{base_url}}/materials?keyword=notes&subjectId={{subject_id}}&categoryId={{category_id}}"
+method: GET
+headers:
+  Authorization: Bearer {{student_token}}
+queryParams:
+  keyword: notes
+  subjectId: "{{subject_id}}"
+  categoryId: "{{category_id}}"
+order: 14000

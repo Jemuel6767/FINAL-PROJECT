@@ -1,0 +1,9 @@
+$kind: collection
+description: Postman collection for the StudyHub NestJS backend.
+variables:
+  base_url: http://localhost:3000
+  teacher_token: ""
+  student_token: ""
+  subject_id: "1"
+  category_id: "1"
+  material_id: "1"

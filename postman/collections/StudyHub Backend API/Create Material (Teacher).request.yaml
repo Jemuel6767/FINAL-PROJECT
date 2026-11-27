@@ -1,0 +1,25 @@
+$kind: http-request
+url: "{{base_url}}/materials"
+method: POST
+headers:
+  Authorization: Bearer {{teacher_token}}
+body:
+  type: formdata
+  content:
+    - type: text
+      key: title
+      value: Lecture Notes
+    - type: text
+      key: description
+      value: Sample notes
+    - type: text
+      key: subjectId
+      value: "{{subject_id}}"
+    - type: text
+      key: categoryId
+      value: "{{category_id}}"
+    - type: file
+      key: file
+      src:
+        - ""
+order: 16000
