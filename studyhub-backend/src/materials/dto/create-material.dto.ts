@@ -1,14 +1,15 @@
 import { Type } from 'class-transformer';
-import { IsInt, IsOptional, IsString, MinLength } from 'class-validator';
+import { IsInt, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class CreateMaterialDto {
   @IsString()
   @MinLength(2)
+  @MaxLength(150)
   title!: string;
 
   @IsOptional()
   @IsString()
-  description?: string;
+  description?: string | null;
 
   @Type(() => Number)
   @IsInt()

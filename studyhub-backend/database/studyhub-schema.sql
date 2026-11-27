@@ -1,71 +1,61 @@
-﻿CREATE DATABASE IF NOT EXISTS studyhub_db
+CREATE DATABASE IF NOT EXISTS studyhub_v2
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
 
-USE studyhub_db;
+USE studyhub_v2;
 
-CREATE TABLE IF NOT EXISTS users (
-  id INT NOT NULL AUTO_INCREMENT,
-  name VARCHAR(120) NOT NULL,
-  email VARCHAR(160) NOT NULL,
-  password VARCHAR(255) NOT NULL,
-  role ENUM('student', 'teacher') NOT NULL DEFAULT 'student',
-  created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-  updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
-  PRIMARY KEY (id),
-  UNIQUE KEY uq_users_email (email)
+CREATE TABLE IF NOT EXISTS `User` (
+  UserID INT NOT NULL AUTO_INCREMENT,
+  FullName VARCHAR(100) NOT NULL,
+  Email VARCHAR(150) NOT NULL,
+  PasswordHash VARCHAR(255) NOT NULL,
+  Role VARCHAR(10) NOT NULL,
+  PRIMARY KEY (UserID),
+  UNIQUE KEY uq_User_Email (Email),
+  CONSTRAINT chk_User_Role CHECK (Role IN ('Teacher', 'Student'))
 ) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS subjects (
-  id INT NOT NULL AUTO_INCREMENT,
-  name VARCHAR(120) NOT NULL,
-  description TEXT NULL,
-  created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-  updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
-  PRIMARY KEY (id),
-  UNIQUE KEY uq_subjects_name (name)
+CREATE TABLE IF NOT EXISTS Subject (
+  SubjectID INT NOT NULL AUTO_INCREMENT,
+  SubjectCode VARCHAR(20) NOT NULL,
+  SubjectName VARCHAR(100) NOT NULL,
+  PRIMARY KEY (SubjectID),
+  UNIQUE KEY uq_Subject_SubjectCode (SubjectCode)
 ) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS categories (
-  id INT NOT NULL AUTO_INCREMENT,
-  name VARCHAR(120) NOT NULL,
-  description TEXT NULL,
-  created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-  updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
-  PRIMARY KEY (id),
-  UNIQUE KEY uq_categories_name (name)
+CREATE TABLE IF NOT EXISTS Category (
+  CategoryID INT NOT NULL AUTO_INCREMENT,
+  CategoryName VARCHAR(50) NOT NULL,
+  PRIMARY KEY (CategoryID),
+  UNIQUE KEY uq_Category_CategoryName (CategoryName)
 ) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS materials (
-  id INT NOT NULL AUTO_INCREMENT,
-  title VARCHAR(180) NOT NULL,
-  description TEXT NULL,
-  file_name VARCHAR(255) NOT NULL,
-  file_path VARCHAR(500) NOT NULL,
-  file_type VARCHAR(100) NOT NULL,
-  file_size INT NOT NULL,
-  user_id INT NOT NULL,
-  subject_id INT NOT NULL,
-  category_id INT NOT NULL,
-  created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-  updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
-  PRIMARY KEY (id),
-  KEY idx_materials_user_id (user_id),
-  KEY idx_materials_subject_id (subject_id),
-  KEY idx_materials_category_id (category_id),
-  CONSTRAINT fk_materials_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE RESTRICT,
-  CONSTRAINT fk_materials_subject FOREIGN KEY (subject_id) REFERENCES subjects (id) ON DELETE RESTRICT,
-  CONSTRAINT fk_materials_category FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE RESTRICT
+CREATE TABLE IF NOT EXISTS LearningMaterial (
+  MaterialID INT NOT NULL AUTO_INCREMENT,
+  Title VARCHAR(150) NOT NULL,
+  Description TEXT NULL,
+  FilePath VARCHAR(255) NOT NULL,
+  UploadDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UserID INT NOT NULL,
+  SubjectID INT NOT NULL,
+  CategoryID INT NOT NULL,
+  PRIMARY KEY (MaterialID),
+  KEY idx_LearningMaterial_UserID (UserID),
+  KEY idx_LearningMaterial_SubjectID (SubjectID),
+  KEY idx_LearningMaterial_CategoryID (CategoryID),
+  CONSTRAINT fk_LearningMaterial_User FOREIGN KEY (UserID) REFERENCES `User` (UserID) ON DELETE RESTRICT,
+  CONSTRAINT fk_LearningMaterial_Subject FOREIGN KEY (SubjectID) REFERENCES Subject (SubjectID) ON DELETE RESTRICT,
+  CONSTRAINT fk_LearningMaterial_Category FOREIGN KEY (CategoryID) REFERENCES Category (CategoryID) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS downloads (
-  id INT NOT NULL AUTO_INCREMENT,
-  user_id INT NOT NULL,
-  material_id INT NOT NULL,
-  downloaded_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-  PRIMARY KEY (id),
-  KEY idx_downloads_user_id (user_id),
-  KEY idx_downloads_material_id (material_id),
-  CONSTRAINT fk_downloads_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-  CONSTRAINT fk_downloads_material FOREIGN KEY (material_id) REFERENCES materials (id) ON DELETE CASCADE
+CREATE TABLE IF NOT EXISTS Download (
+  DownloadID INT NOT NULL AUTO_INCREMENT,
+  UserID INT NOT NULL,
+  MaterialID INT NOT NULL,
+  DownloadDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (DownloadID),
+  KEY idx_Download_UserID (UserID),
+  KEY idx_Download_MaterialID (MaterialID),
+  CONSTRAINT fk_Download_User FOREIGN KEY (UserID) REFERENCES `User` (UserID) ON DELETE RESTRICT,
+  CONSTRAINT fk_Download_LearningMaterial FOREIGN KEY (MaterialID) REFERENCES LearningMaterial (MaterialID) ON DELETE RESTRICT
 ) ENGINE=InnoDB;

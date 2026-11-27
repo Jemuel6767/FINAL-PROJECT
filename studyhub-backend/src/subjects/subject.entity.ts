@@ -1,23 +1,17 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import type { Material } from '../materials/material.entity.js';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import type { LearningMaterial } from '../materials/material.entity.js';
 
-@Entity('subjects')
+@Entity({ name: 'Subject' })
 export class Subject {
-  @PrimaryGeneratedColumn()
-  id!: number;
+  @PrimaryGeneratedColumn({ name: 'SubjectID', type: 'int' })
+  subjectId!: number;
 
-  @Column({ type: 'varchar', unique: true, length: 120 })
-  name!: string;
+  @Column({ name: 'SubjectCode', type: 'varchar', length: 20, unique: true })
+  subjectCode!: string;
 
-  @Column({ type: 'text', nullable: true })
-  description!: string | null;
+  @Column({ name: 'SubjectName', type: 'varchar', length: 100 })
+  subjectName!: string;
 
-  @CreateDateColumn({ name: 'created_at' })
-  createdAt!: Date;
-
-  @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt!: Date;
-
-  @OneToMany('Material', 'subject')
-  materials!: Material[];
+  @OneToMany('LearningMaterial', 'subject')
+  materials!: LearningMaterial[];
 }

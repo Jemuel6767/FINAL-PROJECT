@@ -12,7 +12,7 @@ import { DownloadsModule } from './downloads/downloads.module.js';
 import { User } from './users/user.entity.js';
 import { Subject } from './subjects/subject.entity.js';
 import { Category } from './categories/category.entity.js';
-import { Material } from './materials/material.entity.js';
+import { LearningMaterial } from './materials/material.entity.js';
 import { Download } from './downloads/download.entity.js';
 
 @Module({
@@ -28,8 +28,8 @@ import { Download } from './downloads/download.entity.js';
         username: config.get<string>('DB_USERNAME'),
         password: config.get<string>('DB_PASSWORD'),
         database: config.get<string>('DB_NAME', 'studyhub_db'),
-        entities: [User, Subject, Category, Material, Download],
-        synchronize: config.get('NODE_ENV') !== 'production',
+        entities: [User, Subject, Category, LearningMaterial, Download],
+        synchronize: false,
       }),
     }),
     AuthModule,

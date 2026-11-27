@@ -1,435 +1,379 @@
 {
-  "info": {
-    "name": "StudyHub Core Demo",
-    "description": "Core demo only: student registration and login, teacher login and upload, then student material access. Import and select StudyHub Local environment first.",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "item": [
-    {
-      "name": "Register Student",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"name\": \"Postman Student\",\n  \"email\": \"{{student_email}}\",\n  \"password\": \"Student123!\"\n}"
-        },
-        "url": "{{base_url}}/auth/register"
-      },
-      "event": [
-        {
-          "listen": "prerequest",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.environment.set('student_email', `postman.student.${Date.now()}@example.com`);"
-            ]
-          }
-        },
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('Student registration returns 201', () => pm.response.to.have.status(201));",
-              "const body = pm.response.json();",
-              "pm.test('Registration returns an access token', () => pm.expect(body.access_token).to.be.a('string').and.not.empty);",
-              "if (body.access_token) pm.environment.set('student_token', body.access_token);"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "Login Student",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"email\": \"{{student_email}}\",\n  \"password\": \"Student123!\"\n}"
-        },
-        "url": "{{base_url}}/auth/login"
-      },
-      "event": [
-        {
-          "listen": "prerequest",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "if (!pm.environment.get('student_email')) { console.warn(\"Register the student first, or enter an existing student's email in student_email.\"); pm.execution.skipRequest(); }"
-            ]
-          }
-        },
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('Student login returns 200', () => pm.response.to.have.status(200));",
-              "const body = pm.response.json();",
-              "pm.test('Student login returns an access token', () => pm.expect(body.access_token).to.be.a('string').and.not.empty);",
-              "if (body.access_token) pm.environment.set('student_token', body.access_token);"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "Login Teacher (Demo)",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"email\": \"{{teacher_email}}\",\n  \"password\": \"{{teacher_password}}\"\n}"
-        },
-        "url": "{{base_url}}/auth/login"
-      },
-      "event": [
-        {
-          "listen": "prerequest",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "if (!pm.environment.get('teacher_password') || pm.environment.get('teacher_password') === 'replace_with_demo_password') { console.warn(\"Set teacher_password to the actual DEMO_TEACHER_PASSWORD, and seed the demo teacher first.\"); pm.execution.skipRequest(); }"
-            ]
-          }
-        },
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('Teacher login returns 200', () => pm.response.to.have.status(200));",
-              "const body = pm.response.json();",
-              "pm.test('Teacher login returns an access token', () => pm.expect(body.access_token).to.be.a('string').and.not.empty);",
-              "if (body.access_token) pm.environment.set('teacher_token', body.access_token);"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "Create Subject (Teacher)",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Authorization",
-            "value": "Bearer {{teacher_token}}"
-          },
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"name\": \"{{subject_name}}\",\n  \"description\": \"StudyHub demo subject\"\n}"
-        },
-        "url": "{{base_url}}/subjects"
-      },
-      "event": [
-        {
-          "listen": "prerequest",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "if (!pm.environment.get('teacher_token')) { console.warn(\"Login as teacher first.\"); pm.execution.skipRequest(); }",
-              "pm.environment.set('subject_name', `StudyHubDemoSubject${Date.now()}`);"
-            ]
-          }
-        },
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('Subject is created', () => pm.response.to.have.status(201));",
-              "const body = pm.response.json();",
-              "pm.test('Subject response has an ID', () => pm.expect(body.id).to.exist);",
-              "if (body.id) pm.environment.set('subject_id', String(body.id));"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "Create Category (Teacher)",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Authorization",
-            "value": "Bearer {{teacher_token}}"
-          },
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"name\": \"{{category_name}}\",\n  \"description\": \"StudyHub demo category\"\n}"
-        },
-        "url": "{{base_url}}/categories"
-      },
-      "event": [
-        {
-          "listen": "prerequest",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "if (!pm.environment.get('teacher_token')) { console.warn(\"Login as teacher first.\"); pm.execution.skipRequest(); }",
-              "pm.environment.set('category_name', `StudyHubDemoCategory${Date.now()}`);"
-            ]
-          }
-        },
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('Category is created', () => pm.response.to.have.status(201));",
-              "const body = pm.response.json();",
-              "pm.test('Category response has an ID', () => pm.expect(body.id).to.exist);",
-              "if (body.id) pm.environment.set('category_id', String(body.id));"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "Upload Material (Teacher)",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Authorization",
-            "value": "Bearer {{teacher_token}}"
-          }
-        ],
-        "body": {
-          "mode": "formdata",
-          "formdata": [
-            {
-              "key": "title",
-              "value": "{{material_title}}",
-              "type": "text"
-            },
-            {
-              "key": "description",
-              "value": "Sample notes",
-              "type": "text"
-            },
-            {
-              "key": "subjectId",
-              "value": "{{subject_id}}",
-              "type": "text"
-            },
-            {
-              "key": "categoryId",
-              "value": "{{category_id}}",
-              "type": "text"
-            },
-            {
-              "key": "file",
-              "type": "file",
-              "src": ""
-            }
-          ]
-        },
-        "url": "{{base_url}}/materials"
-      },
-      "event": [
-        {
-          "listen": "prerequest",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "if (!pm.environment.get('teacher_token')) { console.warn(\"Login as teacher first.\"); pm.execution.skipRequest(); }",
-              "if (!pm.environment.get('subject_id') || !pm.environment.get('category_id')) { console.warn(\"Create a subject and category before uploading.\"); pm.execution.skipRequest(); }",
-              "if (pm.environment.get('material_file_ready') !== 'true') { console.warn(\"Attach a PDF, DOCX, PPTX, or TXT file, then set material_file_ready=true in StudyHub Local.\"); pm.execution.skipRequest(); }",
-              "pm.environment.set('material_title', `StudyHubDemoMaterial${Date.now()}`);"
-            ]
-          }
-        },
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('Material upload succeeds', () => pm.response.to.have.status(201));",
-              "const body = pm.response.json();",
-              "pm.test('Uploaded material has an ID', () => pm.expect(body.id).to.exist);",
-              "if (body.id) pm.environment.set('material_id', String(body.id));"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "Update Material (Teacher)",
-      "request": {
-        "method": "PATCH",
-        "header": [
-          {
-            "key": "Authorization",
-            "value": "Bearer {{teacher_token}}"
-          },
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"title\": \"{{material_title}} Updated\"\n}"
-        },
-        "url": "{{base_url}}/materials/{{material_id}}"
-      },
-      "event": [
-        {
-          "listen": "prerequest",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "if (!pm.environment.get('teacher_token') || !pm.environment.get('material_id')) { console.warn('Update Material skipped: login as the teacher and upload a material first.'); pm.execution.skipRequest(); }"
-            ]
-          }
-        },
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('Teacher can update the uploaded material', () => pm.response.to.have.status(200));",
-              "const body = pm.response.json();",
-              "pm.test('Updated title is returned', () => pm.expect(body.title).to.include('Updated'));"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "List Materials",
-      "request": {
-        "method": "GET",
-        "header": [
-          {
-            "key": "Authorization",
-            "value": "Bearer {{student_token}}"
-          }
-        ],
-        "url": "{{base_url}}/materials?keyword={{material_title}}"
-      },
-      "event": [
-        {
-          "listen": "prerequest",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "if (!pm.environment.get('student_token')) { console.warn(\"Login as student first.\"); pm.execution.skipRequest(); }",
-              "if (!pm.environment.get('material_id')) { console.warn(\"Upload a material as teacher first.\"); pm.execution.skipRequest(); }"
-            ]
-          }
-        },
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('Student can access material list', () => pm.response.to.have.status(200));",
-              "const materials = pm.response.json();",
-              "pm.test('The uploaded material is listed', () => pm.expect(materials).to.be.an('array').and.not.empty);"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "Get Material",
-      "request": {
-        "method": "GET",
-        "header": [
-          {
-            "key": "Authorization",
-            "value": "Bearer {{student_token}}"
-          }
-        ],
-        "url": "{{base_url}}/materials/{{material_id}}"
-      },
-      "event": [
-        {
-          "listen": "prerequest",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "if (!pm.environment.get('student_token')) { console.warn(\"Login as student first.\"); pm.execution.skipRequest(); }",
-              "if (!pm.environment.get('material_id')) { console.warn(\"Upload a material as teacher first.\"); pm.execution.skipRequest(); }"
-            ]
-          }
-        },
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('Student can open the material', () => pm.response.to.have.status(200));"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "Download Material",
-      "request": {
-        "method": "GET",
-        "header": [
-          {
-            "key": "Authorization",
-            "value": "Bearer {{student_token}}"
-          }
-        ],
-        "url": "{{base_url}}/materials/{{material_id}}/download"
-      },
-      "event": [
-        {
-          "listen": "prerequest",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "if (!pm.environment.get('student_token')) { console.warn(\"Login as student first.\"); pm.execution.skipRequest(); }",
-              "if (!pm.environment.get('material_id')) { console.warn(\"Upload a material as teacher first.\"); pm.execution.skipRequest(); }"
-            ]
-          }
-        },
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('Student can download the material', () => pm.response.to.have.status(200));"
-            ]
-          }
-        }
-      ]
-    }
-  ]
+    "info":  {
+                 "description":  "StudyHub API organized by Authentication, Create, Inventory, and Cleanup. No request scripts. Tokens are pasted manually from login responses.",
+                 "name":  "StudyHub",
+                 "schema":  "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+             },
+    "item":  [
+                 {
+                     "name":  "Authentication",
+                     "description":  "Login, student registration, and logout.",
+                     "item":  [
+                                  {
+                                      "name":  "REGISTER STUDENT",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  {
+                                                                     "key":  "Content-Type",
+                                                                     "value":  "application/json"
+                                                                 },
+                                                      "body":  {
+                                                                   "raw":  "{\n  \"fullName\": \"Demo Student\",\n  \"email\": \"{{student_email}}\",\n  \"password\": \"{{student_password}}\"\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{base_url}}/auth/register"
+                                                  },
+                                      "description":  "Create a Student account; this endpoint cannot create a Teacher."
+                                  },
+                                  {
+                                      "name":  "LOGIN TEACHER",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  {
+                                                                     "key":  "Content-Type",
+                                                                     "value":  "application/json"
+                                                                 },
+                                                      "body":  {
+                                                                   "raw":  "{\n  \"email\": \"{{teacher_email}}\",\n  \"password\": \"{{teacher_password}}\"\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{base_url}}/auth/login"
+                                                  },
+                                      "description":  "Use the seeded teacher credentials. Copy access_token and user.userId from the response into the environment."
+                                  },
+                                  {
+                                      "name":  "LOGIN STUDENT",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  {
+                                                                     "key":  "Content-Type",
+                                                                     "value":  "application/json"
+                                                                 },
+                                                      "body":  {
+                                                                   "raw":  "{\n  \"email\": \"{{student_email}}\",\n  \"password\": \"{{student_password}}\"\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{base_url}}/auth/login"
+                                                  },
+                                      "description":  "Copy access_token and user.userId from the response into the environment."
+                                  },
+                                  {
+                                      "name":  "LOGOUT",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "auth":  {
+                                                                   "bearer":  [
+                                                                                  {
+                                                                                      "key":  "token",
+                                                                                      "type":  "string",
+                                                                                      "value":  "{{access_token}}"
+                                                                                  }
+                                                                              ],
+                                                                   "type":  "bearer"
+                                                               },
+                                                      "url":  "{{base_url}}/auth/logout"
+                                                  },
+                                      "description":  "Revokes the bearer token in the environment."
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Create",
+                     "description":  "Create learning materials.",
+                     "item":  [
+                                  {
+                                      "name":  "CREATE MATERIAL",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "auth":  {
+                                                                   "bearer":  [
+                                                                                  {
+                                                                                      "key":  "token",
+                                                                                      "type":  "string",
+                                                                                      "value":  "{{access_token}}"
+                                                                                  }
+                                                                              ],
+                                                                   "type":  "bearer"
+                                                               },
+                                                      "url":  "{{base_url}}/learning-materials",
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "title",
+                                                                                        "value":  "StudyHub Learning Materials Guide",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "description",
+                                                                                        "value":  "A learning resource for the class.",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "subjectId",
+                                                                                        "value":  "{{subject_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "categoryId",
+                                                                                        "value":  "{{category_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "file",
+                                                                                        "type":  "file",
+                                                                                        "src":  [
+
+                                                                                                ]
+                                                                                    }
+                                                                                ]
+                                                               }
+                                                  },
+                                      "description":  "Change Body to form-data, add title, description, subjectId, categoryId as Text and file as File. Upload supports PDF, DOCX, PPTX up to 10 MB."
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Inventory",
+                     "description":  "Read and browse your StudyHub data.",
+                     "item":  [
+                                  {
+                                      "name":  "READ MATERIALS",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "auth":  {
+                                                                   "bearer":  [
+                                                                                  {
+                                                                                      "key":  "token",
+                                                                                      "type":  "string",
+                                                                                      "value":  "{{access_token}}"
+                                                                                  }
+                                                                              ],
+                                                                   "type":  "bearer"
+                                                               },
+                                                      "url":  "{{base_url}}/learning-materials"
+                                                  },
+                                      "description":  "Browse; optional query parameters: search, subjectId, categoryId."
+                                  },
+                                  {
+                                      "name":  "MY PROFILE",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "auth":  {
+                                                                   "bearer":  [
+                                                                                  {
+                                                                                      "key":  "token",
+                                                                                      "type":  "string",
+                                                                                      "value":  "{{access_token}}"
+                                                                                  }
+                                                                              ],
+                                                                   "type":  "bearer"
+                                                               },
+                                                      "url":  "{{base_url}}/users/{{user_id}}"
+                                                  },
+                                      "description":  "Use user.userId from your own login response."
+                                  },
+                                  {
+                                      "name":  "LIST SUBJECTS",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "auth":  {
+                                                                   "bearer":  [
+                                                                                  {
+                                                                                      "key":  "token",
+                                                                                      "type":  "string",
+                                                                                      "value":  "{{access_token}}"
+                                                                                  }
+                                                                              ],
+                                                                   "type":  "bearer"
+                                                               },
+                                                      "url":  "{{base_url}}/subjects"
+                                                  },
+                                      "description":  "Returns subjects and IDs."
+                                  },
+                                  {
+                                      "name":  "LIST CATEGORIES",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "auth":  {
+                                                                   "bearer":  [
+                                                                                  {
+                                                                                      "key":  "token",
+                                                                                      "type":  "string",
+                                                                                      "value":  "{{access_token}}"
+                                                                                  }
+                                                                              ],
+                                                                   "type":  "bearer"
+                                                               },
+                                                      "url":  "{{base_url}}/categories"
+                                                  },
+                                      "description":  "Returns categories and IDs."
+                                  },
+                                  {
+                                      "name":  "DOWNLOAD HISTORY",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "auth":  {
+                                                                   "bearer":  [
+                                                                                  {
+                                                                                      "key":  "token",
+                                                                                      "type":  "string",
+                                                                                      "value":  "{{access_token}}"
+                                                                                  }
+                                                                              ],
+                                                                   "type":  "bearer"
+                                                               },
+                                                      "url":  "{{base_url}}/users/{{user_id}}/downloads"
+                                                  },
+                                      "description":  "The account can only view its own history."
+                                  },
+                                  {
+                                      "name":  "DOWNLOAD MATERIAL",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "auth":  {
+                                                                   "bearer":  [
+                                                                                  {
+                                                                                      "key":  "token",
+                                                                                      "type":  "string",
+                                                                                      "value":  "{{access_token}}"
+                                                                                  }
+                                                                              ],
+                                                                   "type":  "bearer"
+                                                               },
+                                                      "url":  "{{base_url}}/learning-materials/{{material_id}}/download"
+                                                  },
+                                      "description":  "Use Send and Save Response to download the file; success is recorded in Download history."
+                                  },
+                                  {
+                                      "name":  "UPDATE SUBJECT",
+                                      "request":  {
+                                                      "method":  "PUT",
+                                                      "header":  {
+                                                                     "key":  "Content-Type",
+                                                                     "value":  "application/json"
+                                                                 },
+                                                      "auth":  {
+                                                                   "bearer":  [
+                                                                                  {
+                                                                                      "key":  "token",
+                                                                                      "type":  "string",
+                                                                                      "value":  "{{access_token}}"
+                                                                                  }
+                                                                              ],
+                                                                   "type":  "bearer"
+                                                               },
+                                                      "body":  {
+                                                                   "raw":  "{\n  \"subjectCode\": \"CS101\",\n  \"subjectName\": \"Computer Fundamentals\"\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{base_url}}/subjects/{{subject_id}}"
+                                                  },
+                                      "description":  "Teacher only. Use an existing subject ID."
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Cleanup",
+                     "description":  "Update and delete a material you own.",
+                     "item":  [
+                                  {
+                                      "name":  "UPDATE MATERIAL",
+                                      "request":  {
+                                                      "method":  "PATCH",
+                                                      "header":  {
+                                                                     "key":  "Content-Type",
+                                                                     "value":  "application/json"
+                                                                 },
+                                                      "auth":  {
+                                                                   "bearer":  [
+                                                                                  {
+                                                                                      "key":  "token",
+                                                                                      "type":  "string",
+                                                                                      "value":  "{{access_token}}"
+                                                                                  }
+                                                                              ],
+                                                                   "type":  "bearer"
+                                                               },
+                                                      "body":  {
+                                                                   "raw":  "{\n  \"title\": \"Updated material title\",\n  \"description\": \"Updated description\"\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               },
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "url":  "{{base_url}}/learning-materials/{{material_id}}"
+                                                  },
+                                      "description":  "Teacher who uploaded the material only."
+                                  },
+                                  {
+                                      "name":  "DELETE MATERIAL",
+                                      "request":  {
+                                                      "method":  "DELETE",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "auth":  {
+                                                                   "bearer":  [
+                                                                                  {
+                                                                                      "key":  "token",
+                                                                                      "type":  "string",
+                                                                                      "value":  "{{access_token}}"
+                                                                                  }
+                                                                              ],
+                                                                   "type":  "bearer"
+                                                               },
+                                                      "url":  "{{base_url}}/learning-materials/{{material_id}}"
+                                                  },
+                                      "description":  "Original uploader only; returns 409 if download records reference it."
+                                  }
+                              ]
+                 }
+             ]
 }

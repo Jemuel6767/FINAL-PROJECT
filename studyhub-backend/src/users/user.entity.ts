@@ -1,40 +1,28 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Check, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { UserRole } from '../common/enums/user-role.enum.js';
-import type { Material } from '../materials/material.entity.js';
+import type { LearningMaterial } from '../materials/material.entity.js';
 import type { Download } from '../downloads/download.entity.js';
 
-@Entity('users')
+@Entity({ name: 'User' })
+@Check('chk_User_Role', "Role IN ('Teacher', 'Student')")
 export class User {
-  @PrimaryGeneratedColumn()
-  id!: number;
+  @PrimaryGeneratedColumn({ name: 'UserID', type: 'int' })
+  userId!: number;
 
-  @Column({ type: 'varchar', length: 120 })
-  name!: string;
+  @Column({ name: 'FullName', type: 'varchar', length: 100 })
+  fullName!: string;
 
-  @Column({ type: 'varchar', unique: true, length: 160 })
+  @Column({ name: 'Email', type: 'varchar', length: 150, unique: true })
   email!: string;
 
-  @Column({ type: 'varchar', select: false })
-  password!: string;
+  @Column({ name: 'PasswordHash', type: 'varchar', length: 255, select: false })
+  passwordHash!: string;
 
-  @Column({ type: 'enum', enum: UserRole, default: UserRole.STUDENT })
+  @Column({ name: 'Role', type: 'varchar', length: 10 })
   role!: UserRole;
 
-  @CreateDateColumn({ name: 'created_at' })
-  createdAt!: Date;
-
-  @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt!: Date;
-
-  @OneToMany('Material', 'owner')
-  materials!: Material[];
+  @OneToMany('LearningMaterial', 'uploader')
+  materials!: LearningMaterial[];
 
   @OneToMany('Download', 'user')
   downloads!: Download[];

@@ -1,26 +1,26 @@
 import { CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Column } from 'typeorm';
 import type { User } from '../users/user.entity.js';
-import type { Material } from '../materials/material.entity.js';
+import type { LearningMaterial } from '../materials/material.entity.js';
 
-@Entity('downloads')
+@Entity({ name: 'Download' })
 export class Download {
-  @PrimaryGeneratedColumn()
-  id!: number;
+  @PrimaryGeneratedColumn({ name: 'DownloadID', type: 'int' })
+  downloadId!: number;
 
-  @Column({ type: 'int', name: 'user_id' })
+  @Column({ name: 'UserID', type: 'int' })
   userId!: number;
 
-  @Column({ type: 'int', name: 'material_id' })
+  @Column({ name: 'MaterialID', type: 'int' })
   materialId!: number;
 
-  @CreateDateColumn({ name: 'downloaded_at' })
-  downloadedAt!: Date;
+  @CreateDateColumn({ name: 'DownloadDate', type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+  downloadDate!: Date;
 
-  @ManyToOne('User', 'downloads', { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id' })
+  @ManyToOne('User', 'downloads', { onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'UserID', referencedColumnName: 'userId' })
   user!: User;
 
-  @ManyToOne('Material', 'downloads', { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'material_id' })
-  material!: Material;
+  @ManyToOne('LearningMaterial', 'downloads', { onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'MaterialID', referencedColumnName: 'materialId' })
+  material!: LearningMaterial;
 }

@@ -6,6 +6,8 @@ import { UsersModule } from '../users/users.module.js';
 import { AuthController } from './auth.controller.js';
 import { AuthService } from './auth.service.js';
 import { JwtStrategy } from './jwt.strategy.js';
+import { TokenRevocationService } from './token-revocation.service.js';
+import { LoginRateLimitGuard } from './login-rate-limit.guard.js';
 
 @Module({
   imports: [
@@ -15,13 +17,18 @@ import { JwtStrategy } from './jwt.strategy.js';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        secret: config.get<string>('JWT_SECRET', 'development-only-secret'),
-        signOptions: { expiresIn: config.get<string>('JWT_EXPIRES_IN', '1d') as never },
+        secret: config.getOrThrow<string>('JWT_SECRET'),
+        signOptions: {
+          expiresIn: '15m',
+          issuer: config.get<string>('JWT_ISSUER', 'studyhub-api'),
+          audience: config.get<string>('JWT_AUDIENCE', 'studyhub-web'),
+          algorithm: 'HS256',
+        },
       }),
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, TokenRevocationService, LoginRateLimitGuard],
   exports: [AuthService],
 })
 export class AuthModule {}

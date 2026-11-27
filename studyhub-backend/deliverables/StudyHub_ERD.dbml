@@ -1,47 +1,36 @@
-Table users {
-  id int [pk, increment]
-  name varchar(120)
-  email varchar(160) [unique]
-  password varchar
-  role varchar
-  created_at datetime
-  updated_at datetime
+Table User {
+  UserID int [pk, increment]
+  FullName varchar(100) [not null]
+  Email varchar(150) [unique, not null]
+  PasswordHash varchar(255) [not null]
+  Role varchar(10) [not null, note: 'Teacher or Student']
 }
 
-Table subjects {
-  id int [pk, increment]
-  name varchar(120) [unique]
-  description text
-  created_at datetime
-  updated_at datetime
+Table Subject {
+  SubjectID int [pk, increment]
+  SubjectCode varchar(20) [unique, not null]
+  SubjectName varchar(100) [not null]
 }
 
-Table categories {
-  id int [pk, increment]
-  name varchar(120) [unique]
-  description text
-  created_at datetime
-  updated_at datetime
+Table Category {
+  CategoryID int [pk, increment]
+  CategoryName varchar(50) [unique, not null]
 }
 
-Table materials {
-  id int [pk, increment]
-  title varchar(180)
-  description text
-  file_name varchar(255)
-  file_path varchar(500)
-  file_type varchar(100)
-  file_size int
-  user_id int [ref: > users.id]
-  subject_id int [ref: > subjects.id]
-  category_id int [ref: > categories.id]
-  created_at datetime
-  updated_at datetime
+Table LearningMaterial {
+  MaterialID int [pk, increment]
+  Title varchar(150) [not null]
+  Description text
+  FilePath varchar(255) [not null]
+  UploadDate datetime [not null, default: `CURRENT_TIMESTAMP`]
+  UserID int [not null, ref: > User.UserID]
+  SubjectID int [not null, ref: > Subject.SubjectID]
+  CategoryID int [not null, ref: > Category.CategoryID]
 }
 
-Table downloads {
-  id int [pk, increment]
-  user_id int [ref: > users.id]
-  material_id int [ref: > materials.id]
-  downloaded_at datetime
+Table Download {
+  DownloadID int [pk, increment]
+  UserID int [not null, ref: > User.UserID]
+  MaterialID int [not null, ref: > LearningMaterial.MaterialID]
+  DownloadDate datetime [not null, default: `CURRENT_TIMESTAMP`]
 }

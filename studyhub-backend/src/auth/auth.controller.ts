@@ -1,32 +1,36 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
-import { Request } from 'express';
-import { JwtAuthGuard } from '../common/guards/jwt-auth.guard.js';
-import { User } from '../users/user.entity.js';
+import { Body, Controller, HttpCode, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
+import type { Request } from 'express';
 import { CreateUserDto } from '../users/dto/create-user.dto.js';
 import { LoginDto } from './dto/login.dto.js';
 import { AuthService } from './auth.service.js';
-
-type AuthenticatedRequest = Request & { user: User };
+import { JwtAuthGuard } from '../common/guards/jwt-auth.guard.js';
+import { LoginRateLimitGuard } from './login-rate-limit.guard.js';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService, private readonly loginRateLimit: LoginRateLimitGuard) {}
 
   @Post('register')
+  @HttpCode(HttpStatus.CREATED)
   register(@Body() dto: CreateUserDto) {
     return this.authService.register(dto);
   }
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  login(@Body() dto: LoginDto) {
-    return this.authService.login(dto);
+  @UseGuards(LoginRateLimitGuard)
+  async login(@Body() dto: LoginDto, @Req() request: Request) {
+    const result = await this.authService.login(dto);
+    this.loginRateLimit.reset(request.ip ?? 'unknown', dto.email);
+    return result;
   }
 
-  @Get('profile')
+  @Post('logout')
+  @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(JwtAuthGuard)
-  profile(@Req() request: AuthenticatedRequest) {
-    const { password: _password, ...safeUser } = request.user;
-    return safeUser;
+  async logout(@Req() request: Request) {
+    const authorization = request.headers.authorization ?? '';
+    const token = authorization.replace(/^Bearer\s+/i, '');
+    await this.authService.logout(token);
   }
 }
