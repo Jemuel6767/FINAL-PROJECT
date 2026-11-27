@@ -1,8 +1,0 @@
-flowchart LR
-  Client[Postman Client] --> Controller[NestJS Controllers]
-  Controller --> Guard[JWT Auth Guard and Roles Guard]
-  Guard --> Service[NestJS Services]
-  Service --> Repository[TypeORM Repositories]
-  Repository --> DB[(MySQL studyhub_db)]
-  Service --> Storage[(Protected uploads folder)]
-  DB --> Repository --> Service --> Controller --> Client
