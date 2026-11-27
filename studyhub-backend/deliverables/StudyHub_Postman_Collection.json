@@ -322,6 +322,27 @@
                      "description":  "Read available materials, then enter the selected materialId before update or delete.",
                      "item":  [
                                   {
+                                      "name":  "SELECT MATERIAL TO UPDATE - READ LIST",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "auth":  {
+                                                                   "bearer":  [
+                                                                                  {
+                                                                                      "key":  "token",
+                                                                                      "type":  "string",
+                                                                                      "value":  "{{access_token}}"
+                                                                                  }
+                                                                              ],
+                                                                   "type":  "bearer"
+                                                               },
+                                                      "url":  "{{base_url}}/learning-materials"
+                                                  },
+                                      "description":  "Read the materials list, then enter the chosen numeric materialId in UPDATE MATERIAL's Params path field."
+                                  },
+                                  {
                                       "name":  "UPDATE MATERIAL",
                                       "request":  {
                                                       "method":  "PATCH",
@@ -348,9 +369,9 @@
                                                                                },
                                                                    "mode":  "raw"
                                                                },
-                                                      "url":  "{{base_url}}/learning-materials/{{material_id}}"
+                                                      "url":  "{{base_url}}/learning-materials/:materialId"
                                                   },
-                                      "description":  "Teacher who uploaded the material only. Use the materialId returned by CREATE MATERIAL."
+                                      "description":  "Choose a numeric materialId from READ MATERIALS in the Params path field. Only the original uploader can update it."
                                   },
                                   {
                                       "name":  "SELECT MATERIAL TO DELETE - READ LIST",
