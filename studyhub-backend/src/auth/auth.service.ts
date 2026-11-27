@@ -11,7 +11,7 @@ export class AuthService {
 
   async register(dto: CreateUserDto) {
     const user = await this.usersService.createStudent(dto);
-    return this.issueToken(user);
+    return { message: 'Registration successful', ...(await this.issueToken(user)) };
   }
 
   async login(dto: LoginDto) {
@@ -19,7 +19,7 @@ export class AuthService {
     if (!user || !(await bcrypt.compare(dto.password, user.password))) {
       throw new UnauthorizedException('Invalid email or password');
     }
-    return this.issueToken(user);
+    return { message: 'Login successful', ...(await this.issueToken(user)) };
   }
 
   private async issueToken(user: { id: number; email: string; role: import('../common/enums/user-role.enum.js').UserRole }) {

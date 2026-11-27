@@ -5,33 +5,618 @@
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "base_url", "value": "http://localhost:3000" },
-    { "key": "teacher_token", "value": "" },
-    { "key": "student_token", "value": "" },
-    { "key": "subject_id", "value": "1" },
-    { "key": "category_id", "value": "1" },
-    { "key": "material_id", "value": "1" }
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "teacher_token",
+      "value": ""
+    },
+    {
+      "key": "student_token",
+      "value": ""
+    },
+    {
+      "key": "subject_id",
+      "value": "1"
+    },
+    {
+      "key": "category_id",
+      "value": "1"
+    },
+    {
+      "key": "material_id",
+      "value": "1"
+    }
   ],
   "item": [
-    { "name": "Register Student", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Postman Student\",\n  \"email\": \"postman.student@example.com\",\n  \"password\": \"Student123!\"\n}" }, "url": "{{base_url}}/auth/register" }, "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 201) pm.collectionVariables.set('student_token', pm.response.json().access_token);"] } }] },
-    { "name": "Login", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"email\": \"student@example.com\",\n  \"password\": \"Student123!\"\n}" }, "url": "{{base_url}}/auth/login" }, "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 200) pm.collectionVariables.set('student_token', pm.response.json().access_token);"] } }] },
-    { "name": "Profile", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{student_token}}" }], "url": "{{base_url}}/auth/profile" } },
-    { "name": "List Subjects", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{student_token}}" }], "url": "{{base_url}}/subjects" } },
-    { "name": "Get Subject", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{student_token}}" }], "url": "{{base_url}}/subjects/{{subject_id}}" } },
-    { "name": "Create Subject (Teacher)", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{teacher_token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Information Technology\",\n  \"description\": \"IT subject\"\n}" }, "url": "{{base_url}}/subjects" } },
-    { "name": "Update Subject (Teacher)", "request": { "method": "PATCH", "header": [{ "key": "Authorization", "value": "Bearer {{teacher_token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"description\": \"Updated description\"\n}" }, "url": "{{base_url}}/subjects/{{subject_id}}" } },
-    { "name": "Delete Subject (Teacher)", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{teacher_token}}" }], "url": "{{base_url}}/subjects/{{subject_id}}" } },
-    { "name": "List Categories", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{student_token}}" }], "url": "{{base_url}}/categories" } },
-    { "name": "Get Category", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{student_token}}" }], "url": "{{base_url}}/categories/{{category_id}}" } },
-    { "name": "Create Category (Teacher)", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{teacher_token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Lecture Notes\",\n  \"description\": \"Learning notes\"\n}" }, "url": "{{base_url}}/categories" } },
-    { "name": "Update Category (Teacher)", "request": { "method": "PATCH", "header": [{ "key": "Authorization", "value": "Bearer {{teacher_token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"description\": \"Updated category\"\n}" }, "url": "{{base_url}}/categories/{{category_id}}" } },
-    { "name": "Delete Category (Teacher)", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{teacher_token}}" }], "url": "{{base_url}}/categories/{{category_id}}" } },
-    { "name": "List Materials", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{student_token}}" }], "url": "{{base_url}}/materials?keyword=notes&subjectId={{subject_id}}&categoryId={{category_id}}" } },
-    { "name": "Get Material", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{student_token}}" }], "url": "{{base_url}}/materials/{{material_id}}" } },
-    { "name": "Create Material (Teacher)", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{teacher_token}}" }], "body": { "mode": "formdata", "formdata": [{ "key": "title", "value": "Lecture Notes", "type": "text" }, { "key": "description", "value": "Sample notes", "type": "text" }, { "key": "subjectId", "value": "{{subject_id}}", "type": "text" }, { "key": "categoryId", "value": "{{category_id}}", "type": "text" }, { "key": "file", "type": "file", "src": "" }] }, "url": "{{base_url}}/materials" } },
-    { "name": "Update Material (Teacher)", "request": { "method": "PATCH", "header": [{ "key": "Authorization", "value": "Bearer {{teacher_token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"title\": \"Updated Lecture Notes\"\n}" }, "url": "{{base_url}}/materials/{{material_id}}" } },
-    { "name": "Delete Material (Teacher)", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{teacher_token}}" }], "url": "{{base_url}}/materials/{{material_id}}" } },
-    { "name": "Download Material", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{student_token}}" }], "url": "{{base_url}}/materials/{{material_id}}/download" } },
-    { "name": "Download History", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{student_token}}" }], "url": "{{base_url}}/downloads" } }
+    {
+      "name": "Register Student",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Postman Student\",\n  \"email\": \"{{student_email}}\",\n  \"password\": \"Student123!\"\n}"
+        },
+        "url": "{{base_url}}/auth/register"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.collectionVariables.set('student_email', `postman.student.${Date.now()}@example.com`);"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Registration returns 201 Created', () => pm.response.to.have.status(201));",
+              "const body = pm.response.json();",
+              "pm.test('Registration returns an access token', () => pm.expect(body.access_token).to.be.a('string').and.not.empty);",
+              "if (body.access_token) pm.collectionVariables.set('student_token', body.access_token);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{student_email}}\",\n  \"password\": \"Student123!\"\n}"
+        },
+        "url": "{{base_url}}/auth/login"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Login returns 200 OK', () => pm.response.to.have.status(200));",
+              "const body = pm.response.json();",
+              "pm.test('Login returns an access token', () => pm.expect(body.access_token).to.be.a('string').and.not.empty);",
+              "if (body.access_token) pm.collectionVariables.set('student_token', body.access_token);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Profile",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{student_token}}"
+          }
+        ],
+        "url": "{{base_url}}/auth/profile"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Profile request returns 200 OK', () => pm.response.to.have.status(200));",
+              "pm.test('Profile contains user details', () => pm.expect(pm.response.json()).to.have.property('email'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "List Subjects",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{student_token}}"
+          }
+        ],
+        "url": "{{base_url}}/subjects"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Subjects request returns 200 OK', () => pm.response.to.have.status(200));",
+              "pm.test('Subjects response is a list', () => pm.expect(pm.response.json()).to.be.an('array'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get Subject",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{student_token}}"
+          }
+        ],
+        "url": "{{base_url}}/subjects/{{subject_id}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Get subject returns 200 OK', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create Subject (Teacher)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{teacher_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Information Technology\",\n  \"description\": \"IT subject\"\n}"
+        },
+        "url": "{{base_url}}/subjects"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Subject is created (201)', () => pm.response.to.have.status(201));",
+              "const body = pm.response.json();",
+              "pm.test('Created subject has an ID', () => pm.expect(body.id).to.exist);",
+              "if (body.id) pm.collectionVariables.set('subject_id', String(body.id));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Update Subject (Teacher)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{teacher_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"description\": \"Updated description\"\n}"
+        },
+        "url": "{{base_url}}/subjects/{{subject_id}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Subject update returns 200 OK', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Delete Subject (Teacher)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{teacher_token}}"
+          }
+        ],
+        "url": "{{base_url}}/subjects/{{subject_id}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Subject delete returns 200 OK', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "List Categories",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{student_token}}"
+          }
+        ],
+        "url": "{{base_url}}/categories"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Categories request returns 200 OK', () => pm.response.to.have.status(200));",
+              "pm.test('Categories response is a list', () => pm.expect(pm.response.json()).to.be.an('array'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get Category",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{student_token}}"
+          }
+        ],
+        "url": "{{base_url}}/categories/{{category_id}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Get category returns 200 OK', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create Category (Teacher)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{teacher_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Lecture Notes\",\n  \"description\": \"Learning notes\"\n}"
+        },
+        "url": "{{base_url}}/categories"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Category is created (201)', () => pm.response.to.have.status(201));",
+              "const body = pm.response.json();",
+              "pm.test('Created category has an ID', () => pm.expect(body.id).to.exist);",
+              "if (body.id) pm.collectionVariables.set('category_id', String(body.id));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Update Category (Teacher)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{teacher_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"description\": \"Updated category\"\n}"
+        },
+        "url": "{{base_url}}/categories/{{category_id}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Category update returns 200 OK', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Delete Category (Teacher)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{teacher_token}}"
+          }
+        ],
+        "url": "{{base_url}}/categories/{{category_id}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Category delete returns 200 OK', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "List Materials",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{student_token}}"
+          }
+        ],
+        "url": "{{base_url}}/materials?keyword=notes&subjectId={{subject_id}}&categoryId={{category_id}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Materials request returns 200 OK', () => pm.response.to.have.status(200));",
+              "pm.test('Materials response is a list', () => pm.expect(pm.response.json()).to.be.an('array'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get Material",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{student_token}}"
+          }
+        ],
+        "url": "{{base_url}}/materials/{{material_id}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Get material returns 200 OK', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create Material (Teacher)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{teacher_token}}"
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "title",
+              "value": "Lecture Notes",
+              "type": "text"
+            },
+            {
+              "key": "description",
+              "value": "Sample notes",
+              "type": "text"
+            },
+            {
+              "key": "subjectId",
+              "value": "{{subject_id}}",
+              "type": "text"
+            },
+            {
+              "key": "categoryId",
+              "value": "{{category_id}}",
+              "type": "text"
+            },
+            {
+              "key": "file",
+              "type": "file",
+              "src": ""
+            }
+          ]
+        },
+        "url": "{{base_url}}/materials"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Material is created (201)', () => pm.response.to.have.status(201));",
+              "const body = pm.response.json();",
+              "pm.test('Created material has an ID', () => pm.expect(body.id).to.exist);",
+              "if (body.id) pm.collectionVariables.set('material_id', String(body.id));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Update Material (Teacher)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{teacher_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Updated Lecture Notes\"\n}"
+        },
+        "url": "{{base_url}}/materials/{{material_id}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Material update returns 200 OK', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Delete Material (Teacher)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{teacher_token}}"
+          }
+        ],
+        "url": "{{base_url}}/materials/{{material_id}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Material delete returns 200 OK', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Download Material",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{student_token}}"
+          }
+        ],
+        "url": "{{base_url}}/materials/{{material_id}}/download"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Material download returns 200 OK', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Download History",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{student_token}}"
+          }
+        ],
+        "url": "{{base_url}}/downloads"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Download history returns 200 OK', () => pm.response.to.have.status(200));",
+              "pm.test('Download history response is a list', () => pm.expect(pm.response.json()).to.be.an('array'));"
+            ]
+          }
+        }
+      ]
+    }
   ]
 }
